@@ -21,8 +21,8 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true, // Use SSL for port 465 to prevent connection timeouts on cloud servers
   auth: {
-    user: 'nithanssk@gmail.com', 
-    pass: 'jows ukkj armv ysso'  
+    user: 'roobankr6@gmail.com', 
+    pass: 'jvjkdwuhtmgvlldf'  
   }
 });
 
