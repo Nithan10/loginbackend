@@ -11,13 +11,14 @@ app.use(express.json());
 app.use(cors()); 
 
 // Connect to MongoDB
-mongoose.connect('mongodb://127.0.0.1:27017/myauthdb')
+mongoose.connect('mongodb+srv://nithanssk_db_user:xx0P6vVr9DaaKxXm@cluster0.vy1g43n.mongodb.net/?retryWrites=true&w=majority')
   .then(() => console.log('✅ MongoDB Connected'))
   .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
 // Set up Nodemailer Transporter
 // We use your provided Gmail app password here
 const transporter = nodemailer.createTransport({
+  
   service: 'gmail',
   auth: {
     user: 'nithanssk@gmail.com', // The email sending the notification
