@@ -18,7 +18,7 @@ mongoose.connect('mongodb+srv://nithanssk_db_user:xx0P6vVr9DaaKxXm@cluster0.vy1g
 // Set up Nodemailer Transporter
 // We use your provided Gmail app password here
 const transporter = nodemailer.createTransport({
-  
+
   service: 'gmail',
   auth: {
     user: 'nithanssk@gmail.com', // The email sending the notification
@@ -89,7 +89,7 @@ app.post('/api/signup', async (req, res) => {
       return res.status(400).json({ message: 'User already exists. Please log in.' });
     }
 
-    // Create and save new user
+  
     const newUser = new User({ email, password });
     await newUser.save();
 
